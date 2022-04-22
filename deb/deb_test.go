@@ -157,7 +157,7 @@ func TestDebVersionWithReleaseAndPrerelease(t *testing.T) {
 	err := writeControl(&buf, controlData{info, 0})
 	require.NoError(t, err)
 	v := extractDebVersion(&buf)
-	require.Equal(t, "1.0.0-2~rc1", v)
+	require.Equal(t, "1.0.0~rc1-2", v)
 }
 
 func TestDebVersionWithVersionMetadata(t *testing.T) {
