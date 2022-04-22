@@ -260,6 +260,41 @@ func TestNoJoinsControl(t *testing.T) {
 	require.Equal(t, string(bts), w.String())
 }
 
+func TestVersionControl(t *testing.T) {
+	var w bytes.Buffer
+	require.NoError(t, writeControl(&w, controlData{
+		Info: nfpm.WithDefaults(&nfpm.Info{
+			Name:        "foo",
+			Arch:        "amd64",
+			Description: "Foo does things",
+			Priority:    "extra",
+			Maintainer:  "Carlos A Becker <pkg@carlosbecker.com>",
+			Version:     "v1.0.0-beta+meta",
+			Release:     "2",
+			Section:     "default",
+			Homepage:    "http://carlosbecker.com",
+			Vendor:      "nope",
+			Overridables: nfpm.Overridables{
+				Depends:    []string{},
+				Recommends: []string{},
+				Suggests:   []string{},
+				Replaces:   []string{},
+				Provides:   []string{},
+				Conflicts:  []string{},
+				Contents:   []*files.Content{},
+			},
+		}),
+		InstalledSize: 10,
+	}))
+	golden := "testdata/control4.golden"
+	if *update {
+		require.NoError(t, ioutil.WriteFile(golden, w.Bytes(), 0o600))
+	}
+	bts, err := ioutil.ReadFile(golden) //nolint:gosec
+	require.NoError(t, err)
+	require.Equal(t, string(bts), w.String())
+}
+
 func TestDebFileDoesNotExist(t *testing.T) {
 	abs, err := filepath.Abs("../testdata/whatever.confzzz")
 	require.NoError(t, err)
